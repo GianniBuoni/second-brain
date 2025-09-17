@@ -3,4 +3,21 @@ name = "second-brain"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "second-brain"
+path = "src/main.rs"
+
+[[bin]]
+name = "sb"
+path = "src/main.rs"
+
 [dependencies]
+anyhow = "1.0.99"
+chrono = "0.4.42"
+clap = { version = "4.5.47", features = ["derive"] }
+dirs = "6.0.0"
+serde = { version = "1.0.224", features = ["derive"] }
+strum = "0.27.2"
+strum_macros = "0.27.2"
+thiserror = "2.0.16"
+toml = "0.9.6"

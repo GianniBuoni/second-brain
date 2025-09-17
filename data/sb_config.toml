@@ -1,0 +1,4 @@
+[config]
+vault_path = "./vaults/development"
+daily_dir = "daily"
+daily_fmt = "YYYY-MM-DD"
