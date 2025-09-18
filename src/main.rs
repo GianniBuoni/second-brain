@@ -1,17 +1,19 @@
+use std::env;
+
 use anyhow::Result;
 use clap::Parser;
 
 use second_brain::prelude::*;
 
 fn main() -> Result<()> {
-    // make config
-    let config_file = get_config_dir()?;
-    let config = build_config(&config_file)?;
-
+    let config_file =
+        ConfigFile::try_from_env(env::var("SECOND_BRAIN_CONFIG"))?
+            .try_build()?;
+    let config = AppConfig::try_from(&config_file)?;
     let command = Args::parse().command.unwrap_or_default();
 
     match command {
-        Commands::Reset => println!("Reseting confg."),
+        Commands::Reset => println!("Reseting config."),
         Commands::Periodical { time_span } => {
             print_preiodical(&config, time_span.unwrap_or_default());
         }
