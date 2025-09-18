@@ -16,10 +16,10 @@ mod config_file;
 pub enum ConfigError {
     #[error("Couldn't parse system's OS config directory.")]
     SystemDir,
-    #[error(
-        "Passed in configuration path: {0} doesn't exist or isn't a directory"
-    )]
+    #[error("Passed in path: {0} doesn't exist or isn't a file")]
     InvalidFile(PathBuf),
+    #[error("Passed in path: {0} doesn't exist or isn't a directory")]
+    InvalidDir(PathBuf),
     #[error("Couldn't read config file: {0}.")]
     Io(#[from] std::io::Error),
     #[error("Couldn't deserialize passed in file: {0}")]

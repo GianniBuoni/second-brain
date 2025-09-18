@@ -13,7 +13,7 @@ struct TomlConfigMap {
 
 #[derive(Debug, Deserialize)]
 pub struct AppConfig {
-    pub vault_path: String,
+    pub vault_path: PathBuf,
     daily_dir: Option<String>,
     weekly_dir: Option<String>,
     monthly_dir: Option<String>,
@@ -23,16 +23,18 @@ pub struct AppConfig {
 
 impl AppConfig {
     pub fn get_periodical_dir(&self, time_span: Periodical) -> PathBuf {
+        let mut root = self.vault_path.clone();
         let path = match time_span {
             Periodical::Weekly => self.weekly_dir.as_ref(),
             Periodical::Monthly => self.monthly_dir.as_ref(),
             Periodical::Yearly => self.yearly_dir.as_ref(),
             _ => self.daily_dir.as_ref(),
         };
-        let Some(path) = path else {
-            return PathBuf::from(self.vault_path.as_str());
-        };
-        PathBuf::from(self.vault_path.as_str()).join(path)
+        if let Some(p) = path {
+            root = root.join(p);
+        }
+
+        root
     }
 }
 

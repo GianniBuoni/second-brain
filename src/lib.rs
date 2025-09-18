@@ -5,3 +5,4 @@ pub mod prelude {
 
 mod cli;
 mod config;
+pub mod writer;
