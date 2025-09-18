@@ -45,6 +45,12 @@ impl TryFrom<&ConfigFile> for AppConfig {
         let bytes = std::fs::read(value.path.as_path())?;
         let config = toml::from_slice::<TomlConfigMap>(&bytes)?;
 
+        // validate vault dir
+        let vault = config.config.vault_path.as_path();
+        if !vault.is_dir() {
+            return Err(ConfigError::InvalidDir(vault.to_owned()));
+        }
+
         Ok(config.config)
     }
 }
