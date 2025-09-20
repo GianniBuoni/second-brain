@@ -103,11 +103,11 @@ fmt = \"%Y\"";
     #[test]
     fn test_de_full() -> Result<()> {
         let period_config = PeriodConfig {
-            dir: Some("daily".into()),
+            dir: Some("day".into()),
             fmt: Some("%Y-%m-%d".into()),
         };
         let toml_period =
-            TomlPeriod(HashMap::from([(Periodical::Daily, period_config)]));
+            TomlPeriod(HashMap::from([(Periodical::Day, period_config)]));
         let toml_vault = TomlVault {
             dir: "./vaults".into(),
         };
@@ -124,14 +124,14 @@ fmt = \"%Y\"";
     #[test]
     fn test_de_options() -> Result<()> {
         let daily_config = (
-            Periodical::Daily,
+            Periodical::Day,
             PeriodConfig {
-                dir: Some("daily".into()),
+                dir: Some("day".into()),
                 fmt: None,
             },
         );
         let yearly_config = (
-            Periodical::Yearly,
+            Periodical::Year,
             PeriodConfig {
                 dir: None,
                 fmt: Some("%Y".into()),

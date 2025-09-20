@@ -27,18 +27,23 @@ impl App {
         Ok(())
     }
     pub fn check_periodical(&self, period: Periodical) -> Result<()> {
-        let file_dir = self
+        let mut file_dir = self
             .config
             .get_periodical_dir(period)
             .unwrap_or(self.config.vault.to_owned());
+        // convert any relative path into an absolute one
+        if file_dir.is_relative() {
+            file_dir = std::path::absolute(file_dir)?;
+        }
         let file_name = self.get_file_name(period);
         let file_path = &file_dir.join(file_name);
-
+        // write a new files if target does not exist
         if !file_path.exists() {
             write_periodical(file_path)?;
         }
-
-        let editor = std::env::var("EDITOR").unwrap_or("neovim".into());
+        // open file in editor
+        let editor = std::env::var("EDITOR").unwrap_or("nvim".into());
+        std::env::set_current_dir(file_dir)?;
         std::process::Command::new(editor).arg(file_path).status()?;
 
         Ok(())
@@ -50,10 +55,10 @@ impl App {
             self.config.periodical.get(&period)?.fmt.clone()
         })()
         .unwrap_or_else(|| match period {
-            Periodical::Daily => DEFAULT_DAY.to_string(),
-            Periodical::Weekly => DEFAULT_WEEK.to_string(),
-            Periodical::Monthly => DEFAULT_MONTH.to_string(),
-            Periodical::Yearly => DEFAULT_YEAR.to_string(),
+            Periodical::Day => DEFAULT_DAY.to_string(),
+            Periodical::Week => DEFAULT_WEEK.to_string(),
+            Periodical::Month => DEFAULT_MONTH.to_string(),
+            Periodical::Year => DEFAULT_YEAR.to_string(),
         });
         let name = Local::now().format(fmt.as_str()).to_string();
         name + ".md"

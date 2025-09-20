@@ -1,18 +1,14 @@
 [vault]
 dir = "./vaults"
 
-[periodical.daily]
-dir = "daily"
-fmt = "%Y-%m-%d"
+[periodical.day]
+dir = "periodic/day"
 
-[periodical.weekly]
-dir = "weekly"
-fmt = "%Y-W%V"
+[periodical.week]
+dir = "periodic/week"
 
-[periodical.monthly]
-dir = "monthly"
-fmt = "%Y-%m"
+[periodical.month]
+dir = "periodic/monthly"
 
-[periodical.yearly]
-dir = "yearly"
-fmt = "%Y"
+[periodical.year]
+dir = "periodic/year"

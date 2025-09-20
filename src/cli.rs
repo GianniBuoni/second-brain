@@ -53,10 +53,10 @@ impl Default for Commands {
 #[serde(rename_all = "kebab-case")]
 pub enum Periodical {
     #[default]
-    Daily,
-    Weekly,
-    Monthly,
-    Yearly,
+    Day,
+    Week,
+    Month,
+    Year,
 }
 
 fn periodical_help() -> String {
