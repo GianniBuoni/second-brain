@@ -39,7 +39,7 @@ Example config
 # to properly launch the correct file.
 dir = "/vaults"
 
-[periodical.daily]
+[periodical.day]
 dir = "day"
 fmt = "%Y-%m-%d"
 ```
