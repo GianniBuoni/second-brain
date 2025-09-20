@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand};
+use serde::Deserialize;
 use strum::VariantNames;
 use strum_macros::{Display, EnumString, VariantNames};
 
@@ -34,8 +35,22 @@ impl Default for Commands {
     }
 }
 
-#[derive(Debug, Default, Display, Clone, Copy, EnumString, VariantNames, Parser)]
+#[derive(
+    Debug,
+    Default,
+    Display,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    Deserialize,
+    EnumString,
+    Parser,
+    VariantNames,
+)]
 #[strum(serialize_all = "kebab-case")]
+#[serde(rename_all = "kebab-case")]
 pub enum Periodical {
     #[default]
     Daily,

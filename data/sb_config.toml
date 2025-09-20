@@ -1,4 +1,18 @@
-[config]
-vault_path = "./vaults"
-daily_dir = "daily"
-daily_fmt = "YYYY-MM-DD"
+[vault]
+dir = "./vaults"
+
+[periodical.daily]
+dir = "daily"
+fmt = "%Y-%m-%d"
+
+[periodical.weekly]
+dir = "weekly"
+fmt = "%Y-W%V"
+
+[periodical.monthly]
+dir = "monthly"
+fmt = "%Y-%m"
+
+[periodical.yearly]
+dir = "yearly"
+fmt = "%Y"

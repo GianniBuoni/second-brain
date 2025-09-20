@@ -12,15 +12,8 @@ fn main() -> Result<()> {
     let config = AppConfig::try_from(&config_file)?;
     let command = Args::parse().command.unwrap_or_default();
 
-    match command {
-        Commands::Reset => println!("Reseting config."),
-        Commands::Periodical { time_span } => {
-            second_brain::writer::check_periodical(
-                &config,
-                time_span.unwrap_or_default(),
-            )?;
-        }
-    }
+    let app = second_brain::app::App { config, command };
+    app.run()?;
 
     Ok(())
 }
