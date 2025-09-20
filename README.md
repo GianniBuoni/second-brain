@@ -24,20 +24,22 @@ Second brain uses the `$EDITOR` environment variable. If unset, it will attempt 
 
 Only the vault configuration is required. If any of the optional configurations are unset, `second-brain` will default to writing and opening everything to the vault's root directory.
 
-| Config     | Description                             | Example             |
-| ---------- | --------------------------------------- | ------------------- |
-| vault      | map of a path to the second-brain vault | `{dir = ./vaults}`  |
-| periodical | map of time periods and their config    | `[periodial.daily]` |
-| dir        | directory in relation to the vault      | `daily`             |
-| fmt        | date time format for a perodical        | `%Y-%m-%d`          |
+| Config     | Description                        | Example           |
+| ---------- | ---------------------------------- | ----------------- |
+| vault      | map to an obsidian vault directory | `{dir = /vaults}` |
+| periodical | map of a configured time period    | `[periodial.day]` |
+| dir        | directory in relation to the vault | `day`             |
+| fmt        | date time format for a perodical   | `%Y-%m-%d`        |
 
 Example config
 
 ```toml
 [vault]
-dir = "./vaults"
+# it's recommended to use absolute paths to allow the program
+# to properly launch the correct file.
+dir = "/vaults"
 
 [periodical.daily]
-dir = "daily"
+dir = "day"
 fmt = "%Y-%m-%d"
 ```
