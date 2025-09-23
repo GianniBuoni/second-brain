@@ -3,7 +3,10 @@
     just
   ];
 
-  enterShell = ''export SECOND_BRAIN_CONFIG="$PWD/data/sb_config.toml"'';
+  enterTest = ''
+    cargo --version
+    just --version
+  '';
 
   languages.rust = {
     enable = true;
