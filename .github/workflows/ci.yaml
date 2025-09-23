@@ -12,7 +12,7 @@ jobs:
         shell: devenv shell bash -- -e {0}
     steps:
       - name: Check out code
-        uses: action/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Install nix
         uses: cachix/install-nix-action@v26
