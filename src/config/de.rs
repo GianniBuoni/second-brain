@@ -1,21 +1,7 @@
-use std::collections::HashMap;
-
-use serde::Deserialize;
-
 use super::*;
 
-pub mod prelude {
-    pub use super::AppConfig;
-}
-
-#[derive(Debug, PartialEq)]
-pub struct AppConfig {
-    pub vault: PathBuf,
-    pub periodical: HashMap<Periodical, PeriodConfig>,
-}
-
 #[derive(Debug, Deserialize, PartialEq)]
-struct TomlConfig {
+pub struct TomlConfig {
     vault: TomlVault,
     periodical: TomlPeriod,
 }
@@ -27,30 +13,6 @@ struct TomlVault {
 
 #[derive(Debug, Deserialize, PartialEq)]
 struct TomlPeriod(HashMap<Periodical, PeriodConfig>);
-
-#[derive(Debug, Clone, Deserialize, PartialEq)]
-pub struct PeriodConfig {
-    dir: Option<String>,
-    pub fmt: Option<String>,
-}
-
-impl Default for PeriodConfig {
-    fn default() -> Self {
-        Self {
-            dir: None,
-            fmt: Some(DEFAULT_DAY.into()),
-        }
-    }
-}
-
-impl AppConfig {
-    /// Pass in a periodical to return the associated
-    /// directory and file name format.
-    pub fn get_periodical_dir(&self, time_span: Periodical) -> Option<PathBuf> {
-        let config = self.periodical.get(&time_span)?;
-        Some(self.vault.join(config.dir.as_ref()?))
-    }
-}
 
 impl From<TomlConfig> for AppConfig {
     fn from(value: TomlConfig) -> Self {
@@ -87,17 +49,17 @@ mod tests {
     const CASE_FULL: &str = "[vault]
 dir = \"./vaults\"
 
-[periodical.daily]
-dir = \"daily\"
+[periodical.day]
+dir = \"day\"
 fmt = \"%Y-%m-%d\"";
 
     const CASE_OPTIONS: &str = "[vault]
 dir = \"./vaults\"
 
-[periodical.daily]
-dir = \"daily\"
+[periodical.day]
+dir = \"day\"
 
-[periodical.yearly]
+[periodical.year]
 fmt = \"%Y\"";
 
     #[test]
