@@ -23,10 +23,14 @@ jobs:
 
       - name: Set up devenv
         shell: bash
-        run: devenv test
+        run: nix profile install nixpkgs#devenv
 
       - name: Build and test environment
+        run: devenv test
+
+      - name: Run test
         run: just test
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
