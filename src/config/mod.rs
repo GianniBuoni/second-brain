@@ -32,7 +32,7 @@ pub enum ConfigError {
 
 #[derive(Debug, PartialEq)]
 pub struct AppConfig {
-    pub vault: PathBuf,
+    vault: PathBuf,
     pub periodical: HashMap<Periodical, PeriodConfig>,
 }
 
@@ -43,6 +43,10 @@ pub struct PeriodConfig {
 }
 
 impl AppConfig {
+    /// returns the configured root directory of the vault
+    pub fn get_vault_root(&self) -> PathBuf {
+        self.vault.clone()
+    }
     /// Pass in a periodical to return the associated
     /// directory and file name format.
     pub fn get_periodical_dir(
@@ -207,5 +211,21 @@ mod tests {
             })?;
 
         Ok(())
+    }
+
+    #[test]
+    fn test_vault_root() {
+        let test_cases = ["day", "month", "week", "year"];
+        let app_config = mixed_config();
+
+        test_cases.into_iter().for_each(|exclude| {
+            let got = app_config.get_vault_root();
+            let got = got.to_string_lossy();
+
+            assert!(
+                !got.contains(exclude),
+                "test if get_vault_root() doesn't use periodic folders"
+            )
+        });
     }
 }
