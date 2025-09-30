@@ -41,7 +41,7 @@ impl App {
         }
         // open file in editor
         let editor = std::env::var("EDITOR").unwrap_or("nvim".into());
-        std::env::set_current_dir(self.config.vault.clone())?;
+        std::env::set_current_dir(self.config.get_vault_root())?;
         std::process::Command::new(editor).arg(file_path).status()?;
 
         Ok(())
