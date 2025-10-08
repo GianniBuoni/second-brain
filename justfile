@@ -1,10 +1,10 @@
 debug:
     git add .
-    nix build .#debug
+    nix build .
 
 test:
     git add .
-    nix build .#test
+    nix flake check --all-systems .
 
 lint:
     cargo clippy --all-targets -- -Dwarnings

@@ -3,33 +3,33 @@
     Build package for second-brain application
   '';
   inputs = {
-    flake-utils.url = "github:numtide/flake-utils";
-    naersk.url = "github:nix-community/naersk";
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    rust-flake = {
+      url = "github:juspay/rust-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = {
-    flake-utils,
-    naersk,
-    nixpkgs,
-    ...
-  }:
-    flake-utils.lib.eachDefaultSystem (
-      system: let
-        pkgs = (import nixpkgs) {inherit system;};
-        nativeBuildInputs = with pkgs; [pkg-config];
-        buildInputs = [];
-        naersk' = pkgs.callPackage naersk {};
-        mkApp = release: mode: {
-          src = ./.;
-          inherit nativeBuildInputs buildInputs release mode;
-        };
-      in {
-        packages = {
-          default = naersk'.buildPackage (mkApp true "build");
-          debug = naersk'.buildPackage (mkApp false "build");
-          test = naersk'.buildPackage (mkApp false "test");
-        };
-      }
-    );
+  outputs = inputs @ {flake-parts, ...}:
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      imports = with inputs.rust-flake; [
+        flakeModules.default
+        flakeModules.nixpkgs
+      ];
+      systems = [
+        "x86_64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
+      perSystem = {self', ...}: {
+        rust-project.src = ./.;
+        packages.default = self'.packages.second-brain;
+      };
+    };
 }

@@ -1,0 +1,11 @@
+[toolchain]
+channel = "stable"
+targets = [
+    # liunx
+    "x86_64-unknown-linux-gnu",
+
+    # apple
+    "aarch64-apple-darwin",
+    "x86_64-apple-darwin",
+]
+components = ["clippy", "rustfmt"]
