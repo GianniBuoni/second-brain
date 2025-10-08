@@ -1,4 +1,6 @@
 {pkgs, ...}: {
+  cachix.enable = false;
+
   packages = with pkgs; [
     just
   ];
