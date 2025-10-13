@@ -24,7 +24,7 @@ pub enum ConfigError {
         "Config error. Passed in path: {0} doesn't exist or isn't a directory"
     )]
     InvalidDir(PathBuf),
-    #[error("Config error. Couldn't read config file: {0}.")]
+    #[error("Config error. Couldn't read file: {0}.")]
     Io(#[from] std::io::Error),
     #[error("Config error. Couldn't deserialize passed in file: {0}")]
     De(#[from] toml::de::Error),
@@ -39,6 +39,7 @@ pub struct AppConfig {
 #[derive(Debug, Clone, Deserialize, PartialEq)]
 pub struct PeriodConfig {
     dir: Option<String>,
+    template: Option<PathBuf>,
     pub fmt: Option<String>,
 }
 
@@ -47,7 +48,7 @@ impl AppConfig {
     pub fn get_vault_root(&self) -> PathBuf {
         self.vault.clone()
     }
-    /// Pass in a periodical to return the associated
+    /// pass in a periodical to return the associated
     /// directory and file name format.
     pub fn get_periodical_dir(
         &self,
@@ -76,7 +77,30 @@ impl AppConfig {
             Periodical::Year => DEFAULT_YEAR.to_string(),
         });
         let name = Local::now().format(fmt.as_str()).to_string();
+
         name + ".md"
+    }
+    /// pass in a periodical to get the path to its template
+    pub fn get_template_path(&self, period: Periodical) -> Option<PathBuf> {
+        let period_config = self.periodical.get(&period)?;
+        let template_path = self.vault.join(period_config.template.as_ref()?);
+
+        Some(template_path)
+    }
+    /// pass in a path, validate that it is a file, and get its contents
+    pub fn get_template_contents(
+        &self,
+        path: PathBuf,
+    ) -> Result<Vec<u8>, ConfigError> {
+        let mut path = path;
+        if !path.is_file() {
+            return Err(ConfigError::InvalidFile(path));
+        }
+        if path.is_relative() {
+            path = std::path::absolute(path)?;
+        }
+
+        Ok(std::fs::read(path)?)
     }
 }
 
@@ -99,6 +123,7 @@ mod tests {
                 PeriodConfig {
                     dir: None,
                     fmt: Some("%m-%d-%Y".into()),
+                    template: None,
                 },
             ),
             (
@@ -106,6 +131,7 @@ mod tests {
                 PeriodConfig {
                     dir: Some("period/week".into()),
                     fmt: None,
+                    template: Some("week.md".into()),
                 },
             ),
             (
@@ -113,6 +139,7 @@ mod tests {
                 PeriodConfig {
                     dir: Some("month".into()),
                     fmt: Some("%m".into()),
+                    template: Some("month.md".into()),
                 },
             ),
         ]);
@@ -226,6 +253,23 @@ mod tests {
                 !got.contains(exclude),
                 "test if get_vault_root() doesn't use periodic folders"
             )
+        });
+    }
+
+    #[test]
+    fn test_get_template_path() {
+        let test_cases = [
+            (Periodical::Day, None),
+            (Periodical::Week, Some("./vault/week.md")),
+            (Periodical::Month, Some("./vault/month.md")),
+            (Periodical::Year, None),
+        ];
+        let app_config = mixed_config();
+
+        test_cases.into_iter().for_each(|(period, want)| {
+            let want = want.map(PathBuf::from);
+            let got = app_config.get_template_path(period);
+            assert_eq!(want, got);
         });
     }
 }
