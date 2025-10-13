@@ -12,5 +12,5 @@ lint:
 
 [positional-arguments]
 run *ARGS:
-    SECOND_BRAIN_CONFIG="$PWD/data/sb_config.toml" ./result/bin/sb {{ARGS}}
+    SECOND_BRAIN_CONFIG="$PWD/examples/sb_config.toml" ./result/bin/sb {{ARGS}}
 

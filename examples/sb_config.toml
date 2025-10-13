@@ -1,14 +1,17 @@
 [vault]
 dir = "./vaults"
 
+# paths are relative to the vault dir
 [periodical.day]
 dir = "periodic/day"
+template = "templates/day.md"
 
 [periodical.week]
 dir = "periodic/week"
 
 [periodical.month]
 dir = "periodic/monthly"
+template = "templates/month.md"
 
 [periodical.year]
 dir = "periodic/year"
