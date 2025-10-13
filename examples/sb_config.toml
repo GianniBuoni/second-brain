@@ -1,4 +1,6 @@
 [vault]
+# it's recommended to use absolute paths to allow the program
+# to properly launch the correct file.
 dir = "./vaults"
 
 # paths are relative to the vault dir
