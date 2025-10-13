@@ -4,6 +4,7 @@ debug:
 
 test:
     git add .
+    nix build .
     nix flake check --all-systems .
 
 lint:

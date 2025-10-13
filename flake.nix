@@ -25,7 +25,6 @@
         "aarch64-darwin"
       ];
       perSystem = {self', ...}: {
-        rust-project.src = ./.;
         packages.default = self'.packages.second-brain;
       };
     };
