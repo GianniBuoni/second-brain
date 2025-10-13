@@ -4,18 +4,12 @@ pub mod prelude {
     pub use super::ConfigFile;
 }
 
-// Test different env vriables
-// using dev env var
-// using unset env var
-// using test specific env var
-// invalid
-
-/// Struct that keeps track of the state of configuration I/O.
+/// struct that keeps track of the state of configuration I/O.
 pub struct ConfigFile {
     pub(crate) path: PathBuf,
 }
 
-/// Type state used to prevent AppConfig from consuming
+/// type state used to prevent AppConfig from consuming
 /// a non-inialized/valid config file
 pub struct ConfigFileBuilder {
     path: PathBuf,

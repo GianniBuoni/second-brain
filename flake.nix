@@ -4,11 +4,7 @@
   '';
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-
-    flake-parts = {
-      url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    flake-parts.url = "github:hercules-ci/flake-parts";
 
     rust-flake = {
       url = "github:juspay/rust-flake";
@@ -24,11 +20,11 @@
       ];
       systems = [
         "x86_64-linux"
+        "aarch64-linux"
         "x86_64-darwin"
         "aarch64-darwin"
       ];
       perSystem = {self', ...}: {
-        rust-project.src = ./.;
         packages.default = self'.packages.second-brain;
       };
     };

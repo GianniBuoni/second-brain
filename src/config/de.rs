@@ -51,7 +51,8 @@ dir = \"./vaults\"
 
 [periodical.day]
 dir = \"day\"
-fmt = \"%Y-%m-%d\"";
+fmt = \"%Y-%m-%d\"
+template = \"day.md\"";
 
     const CASE_OPTIONS: &str = "[vault]
 dir = \"./vaults\"
@@ -60,13 +61,15 @@ dir = \"./vaults\"
 dir = \"day\"
 
 [periodical.year]
-fmt = \"%Y\"";
+fmt = \"%Y\"
+template = \"year.md\"";
 
     #[test]
     fn test_de_full() -> Result<()> {
         let period_config = PeriodConfig {
             dir: Some("day".into()),
             fmt: Some("%Y-%m-%d".into()),
+            template: Some("day.md".into()),
         };
         let toml_period =
             TomlPeriod(HashMap::from([(Periodical::Day, period_config)]));
@@ -90,6 +93,7 @@ fmt = \"%Y\"";
             PeriodConfig {
                 dir: Some("day".into()),
                 fmt: None,
+                template: None,
             },
         );
         let yearly_config = (
@@ -97,6 +101,7 @@ fmt = \"%Y\"";
             PeriodConfig {
                 dir: None,
                 fmt: Some("%Y".into()),
+                template: Some("year.md".into()),
             },
         );
         let toml_period =

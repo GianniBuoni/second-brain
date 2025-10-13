@@ -29,7 +29,8 @@ Only the vault configuration is required. If any of the optional configurations 
 | vault      | map to an obsidian vault directory | `{dir = /vaults}`  |
 | periodical | map of a configured time period    | `[periodical.day]` |
 | dir        | directory in relation to the vault | `day`              |
-| fmt        | date time format for a perodical   | `%Y-%m-%d`         |
+| fmt        | date time format for a periodical  | `%Y-%m-%d`         |
+| template   | template file relative to vault    | `templates/day.md` |
 
 Example config
 
