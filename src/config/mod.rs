@@ -13,6 +13,7 @@ pub mod prelude {
 
 mod config_file;
 mod de;
+mod math;
 
 #[derive(Debug, Error)]
 pub enum ConfigError {
