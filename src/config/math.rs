@@ -23,7 +23,7 @@ where
             .ok_or(TimeMathError(period, interval));
     }
     // handle months or years
-    let mut abs = interval.abs() as u32;
+    let mut abs = interval.unsigned_abs() as u32;
     if period == Periodical::Year {
         abs *= 12;
     }
