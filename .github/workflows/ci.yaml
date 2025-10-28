@@ -7,26 +7,24 @@ jobs:
   tests:
     name: Tests
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: devenv shell bash -- -e {0}
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
       - name: Install nix
-        uses: cachix/install-nix-action@v26
-
-      - uses: cachix/cachix-action@v14
-        with:
-          name: devenv
-
-      - name: Set up devenv
-        shell: bash
-        run: nix profile install nixpkgs#devenv
-
-      - name: Build and test environment
-        run: devenv test
+        uses: cachix/install-nix-action@v31
 
       - name: Run test
-        run: just test
+        run: nix build
+  lint:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Install nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Run test
+        run: nix flake check --all-systems
