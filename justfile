@@ -2,7 +2,7 @@ debug:
     git add .
     nix build .
 
-test:
+check:
     git add .
     nix build .
     nix flake check --all-systems .
