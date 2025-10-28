@@ -27,4 +27,4 @@ jobs:
         uses: cachix/install-nix-action@v31
 
       - name: Run lint
-        run: nix flake check --all-systems
+        run: nix flake check --impure

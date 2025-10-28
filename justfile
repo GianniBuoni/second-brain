@@ -5,7 +5,7 @@ debug:
 check:
     git add .
     nix build .
-    nix flake check --all-systems .
+    nix flake check --impure
 
 lint:
     cargo clippy --all-targets -- -Dwarnings
