@@ -17,7 +17,7 @@ jobs:
       - name: Run test
         run: nix build
   lint:
-    name: Tests
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -26,5 +26,5 @@ jobs:
       - name: Install nix
         uses: cachix/install-nix-action@v31
 
-      - name: Run test
+      - name: Run lint
         run: nix flake check --all-systems
