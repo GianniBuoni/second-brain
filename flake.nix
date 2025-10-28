@@ -1,31 +1,21 @@
 {
   description = ''
-    Build package for second-brain application
+    Build and devenv package for second-brain application
   '';
+
+  outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree ./nix);
+
   inputs = {
+    # flake inputs
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
-
-    rust-flake = {
-      url = "github:juspay/rust-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
+    import-tree.url = "github:vic/import-tree";
+    # project inputs
+    devenv.url = "github:cachix/devenv";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs = {nixpkgs.follows = "nixpkgs";};
     };
+    rust-flake.url = "github:juspay/rust-flake";
   };
-
-  outputs = inputs @ {flake-parts, ...}:
-    flake-parts.lib.mkFlake {inherit inputs;} {
-      imports = with inputs.rust-flake; [
-        flakeModules.default
-        flakeModules.nixpkgs
-      ];
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
-      perSystem = {self', ...}: {
-        packages.default = self'.packages.second-brain;
-      };
-    };
 }
