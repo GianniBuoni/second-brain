@@ -1,14 +1,15 @@
-debug:
-    git add .
+debug: add
     nix build .
 
-check:
-    git add .
+check: add
+    nix flake check
     nix build .
-    nix flake check --impure
 
 lint:
     cargo clippy --all-targets -- -Dwarnings
+
+add:
+    git add .
 
 [positional-arguments]
 run *ARGS:
