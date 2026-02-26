@@ -1,17 +1,13 @@
-debug: add
-    nix build .
+build:
+    cargo build
 
-check: add
-    nix flake check
-    nix build .
+test:
+    cargo test
 
 lint:
+    cargo fmt --check
     cargo clippy --all-targets -- -Dwarnings
 
-add:
-    git add .
-
-[positional-arguments]
 run *ARGS:
-    SECOND_BRAIN_CONFIG="$PWD/examples/sb_config.toml" ./result/bin/sb {{ARGS}}
-
+    SECOND_BRAIN_CONFIG="{{justfile_dir()}}/examples/sb_config.toml" \
+    cargo run -- {{ARGS}}

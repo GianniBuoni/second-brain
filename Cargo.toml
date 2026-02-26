@@ -5,10 +5,6 @@ edition = "2024"
 description = "Remembering so you don't have to: simple CLI to quickly access Obsidian vaults in the terminal."
 
 [[bin]]
-name = "second-brain"
-path = "src/main.rs"
-
-[[bin]]
 name = "sb"
 path = "src/main.rs"
 
