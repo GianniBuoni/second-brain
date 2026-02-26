@@ -21,9 +21,7 @@ pub enum ConfigError {
     SystemDir,
     #[error("Config error. Passed in path: {0} doesn't exist or isn't a file")]
     InvalidFile(PathBuf),
-    #[error(
-        "Config error. Passed in path: {0} doesn't exist or isn't a directory"
-    )]
+    #[error("Config error. Passed in path: {0} doesn't exist or isn't a directory")]
     InvalidDir(PathBuf),
     #[error("Config error. Couldn't read file: {0}.")]
     Io(#[from] std::io::Error),
@@ -51,10 +49,7 @@ impl AppConfig {
     }
     /// pass in a periodical to return the associated
     /// directory and file name format.
-    pub fn get_periodical_dir(
-        &self,
-        period: Periodical,
-    ) -> Result<PathBuf, std::io::Error> {
+    pub fn get_periodical_dir(&self, period: Periodical) -> Result<PathBuf, std::io::Error> {
         let mut dir = (|| -> Option<PathBuf> {
             let config = self.periodical.get(&period)?;
             Some(self.vault.join(config.dir.as_ref()?))
@@ -68,15 +63,13 @@ impl AppConfig {
         Ok(dir)
     }
     pub fn get_file_name(&self, period: Periodical) -> String {
-        let fmt = (|| -> Option<String> {
-            self.periodical.get(&period)?.fmt.clone()
-        })()
-        .unwrap_or_else(|| match period {
-            Periodical::Day => DEFAULT_DAY.to_string(),
-            Periodical::Week => DEFAULT_WEEK.to_string(),
-            Periodical::Month => DEFAULT_MONTH.to_string(),
-            Periodical::Year => DEFAULT_YEAR.to_string(),
-        });
+        let fmt = (|| -> Option<String> { self.periodical.get(&period)?.fmt.clone() })()
+            .unwrap_or_else(|| match period {
+                Periodical::Day => DEFAULT_DAY.to_string(),
+                Periodical::Week => DEFAULT_WEEK.to_string(),
+                Periodical::Month => DEFAULT_MONTH.to_string(),
+                Periodical::Year => DEFAULT_YEAR.to_string(),
+            });
         let name = Local::now().format(fmt.as_str()).to_string();
 
         name + ".md"
@@ -89,10 +82,7 @@ impl AppConfig {
         Some(template_path)
     }
     /// pass in a path, validate that it is a file, and get its contents
-    pub fn get_template_contents(
-        &self,
-        path: PathBuf,
-    ) -> Result<Vec<u8>, ConfigError> {
+    pub fn get_template_contents(&self, path: PathBuf) -> Result<Vec<u8>, ConfigError> {
         let mut path = path;
         if !path.is_file() {
             return Err(ConfigError::InvalidFile(path));

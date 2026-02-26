@@ -43,11 +43,7 @@ impl App {
 
         Ok(())
     }
-    fn write_periodical(
-        &self,
-        file_path: &Path,
-        period: Periodical,
-    ) -> anyhow::Result<()> {
+    fn write_periodical(&self, file_path: &Path, period: Periodical) -> anyhow::Result<()> {
         // check and validate templates before creating file
         let mut template = Vec::<u8>::new();
         if let Some(template_path) = self.config.get_template_path(period) {

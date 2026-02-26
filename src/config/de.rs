@@ -71,8 +71,7 @@ template = \"year.md\"";
             fmt: Some("%Y-%m-%d".into()),
             template: Some("day.md".into()),
         };
-        let toml_period =
-            TomlPeriod(HashMap::from([(Periodical::Day, period_config)]));
+        let toml_period = TomlPeriod(HashMap::from([(Periodical::Day, period_config)]));
         let toml_vault = TomlVault {
             dir: "./vaults".into(),
         };
@@ -104,8 +103,7 @@ template = \"year.md\"";
                 template: Some("year.md".into()),
             },
         );
-        let toml_period =
-            TomlPeriod(HashMap::from([daily_config, yearly_config]));
+        let toml_period = TomlPeriod(HashMap::from([daily_config, yearly_config]));
         let want = TomlConfig {
             vault: TomlVault {
                 dir: "./vaults".into(),

@@ -1,9 +1,7 @@
 pub mod prelude {
     pub use super::cli::prelude::*;
     pub use super::config::prelude::*;
-    pub(crate) use super::{
-        DEFAULT_DAY, DEFAULT_MONTH, DEFAULT_WEEK, DEFAULT_YEAR,
-    };
+    pub(crate) use super::{DEFAULT_DAY, DEFAULT_MONTH, DEFAULT_WEEK, DEFAULT_YEAR};
 }
 
 pub mod app;
