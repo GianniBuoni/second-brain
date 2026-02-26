@@ -8,6 +8,22 @@
         "${extraModulesPath}/language/rust.nix"
         "${extraModulesPath}/language/c.nix"
       ];
+
+      packages = with pkgs; [
+        just
+      ];
+
+      commands = [
+        {
+          name = "enterTest";
+          help = "Test dev shell has all required tooling.";
+          command = ''
+            cargo -V
+            cargo clippy -V
+            just -V
+          '';
+        }
+      ];
     };
   };
 }
