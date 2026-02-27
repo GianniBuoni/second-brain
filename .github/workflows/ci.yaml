@@ -14,8 +14,12 @@ jobs:
       - name: Install nix
         uses: cachix/install-nix-action@v31
 
-      - name: Run test
-        run: nix build
+      - name: Run shell test
+        run: nix develop . --command enterTest
+
+      - name: Run tests and build
+        run: nix develop . --command just
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -26,5 +30,8 @@ jobs:
       - name: Install nix
         uses: cachix/install-nix-action@v31
 
+      - name: Run shell test
+        run: nix develop . --command enterTest
+
       - name: Run lint
-        run: nix flake check --impure
+        run: nix develop . --command just lint

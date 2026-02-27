@@ -4,9 +4,7 @@ use chrono::{DateTime, Months, TimeDelta, TimeZone};
 use super::*;
 
 #[derive(Debug, Error)]
-#[error(
-    "Time math error. {0} with an interval of {1} produced an invalid DateTime struct."
-)]
+#[error("Time math error. {0} with an interval of {1} produced an invalid DateTime struct.")]
 pub struct TimeMathError(Periodical, i64);
 
 pub fn add_interval<Tz>(
@@ -72,8 +70,7 @@ mod tests {
         ];
 
         test_cases.into_iter().try_for_each(|(interval, want)| {
-            let got = add_interval(test_date()?, Periodical::Day, interval)?
-                .timestamp();
+            let got = add_interval(test_date()?, Periodical::Day, interval)?.timestamp();
             assert_eq!(
                 want, got,
                 "Test Periodical::Day, with an interval offet of {interval}."
@@ -94,8 +91,7 @@ mod tests {
         ];
 
         test_cases.into_iter().try_for_each(|(interval, want)| {
-            let got = add_interval(test_date()?, Periodical::Week, interval)?
-                .timestamp();
+            let got = add_interval(test_date()?, Periodical::Week, interval)?.timestamp();
             assert_eq!(
                 want, got,
                 "Test Periodical::Week with interval of {interval}."
@@ -117,8 +113,7 @@ mod tests {
         ];
 
         test_cases.into_iter().try_for_each(|(interval, want)| {
-            let got = add_interval(test_date()?, Periodical::Month, interval)?
-                .timestamp();
+            let got = add_interval(test_date()?, Periodical::Month, interval)?.timestamp();
             assert_eq!(
                 want, got,
                 "Test Periodical::Week with interval of {interval}."
@@ -140,8 +135,7 @@ mod tests {
         ];
 
         test_cases.into_iter().try_for_each(|(interval, want)| {
-            let got = add_interval(test_date()?, Periodical::Year, interval)?
-                .timestamp();
+            let got = add_interval(test_date()?, Periodical::Year, interval)?.timestamp();
             assert_eq!(
                 want, got,
                 "Test Periodical::Year with interval of {interval}"
