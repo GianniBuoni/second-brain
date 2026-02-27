@@ -3,7 +3,7 @@ use serde::Deserialize;
 
 use crate::prelude::*;
 
-#[derive(Debug, Default, Clone, Deserialize, PartialEq)]
+#[derive(Debug, Default, Deserialize, PartialEq)]
 pub struct PeriodConfig {
     dir: Option<String>,
     template: Option<String>,
@@ -13,18 +13,18 @@ pub struct PeriodConfig {
 impl PeriodConfig {
     /// Getter that returns an Optional for the configured parent directory
     /// for the periodical note file.
-    fn get_parent_dir(&self) -> Option<&str> {
+    pub fn get_parent_dir(&self) -> Option<&str> {
         Some(self.dir.as_ref()?.as_str())
     }
     /// Getter that returns an Optional for the configured template directory
     /// for the periodical note file.
-    fn get_template_dir(&self) -> Option<&str> {
+    pub fn get_template_dir(&self) -> Option<&str> {
         Some(self.template.as_ref()?.as_str())
     }
     /// Attempts to get the configured file name associated with
     /// this Periodical.
     /// Returns a default format if not configured.
-    fn format_file_name(&self, period: Periodical) -> String {
+    pub fn format_file_name(&self, period: Periodical) -> String {
         let fmt = self
             .fmt
             .as_ref()
