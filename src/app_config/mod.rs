@@ -5,12 +5,24 @@ use std::{
 
 use crate::{periodic_config::PeriodConfig, prelude::*};
 
-pub mod prelude {}
+pub mod prelude {
+    pub use super::AppConfig;
+}
+
+mod de;
 
 #[derive(Debug, PartialEq)]
 pub struct AppConfig {
     vault: PathBuf,
     periodical: HashMap<Periodical, PeriodConfig>,
+}
+
+impl TryFrom<ConfigFile> for AppConfig {
+    type Error = ConfigError;
+
+    fn try_from(value: ConfigFile) -> Result<Self, Self::Error> {
+        todo!()
+    }
 }
 
 impl AppConfig {
