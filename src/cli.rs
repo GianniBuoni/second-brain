@@ -1,10 +1,8 @@
 use clap::{Parser, Subcommand};
-use serde::Deserialize;
-use strum::VariantNames;
-use strum_macros::{Display, EnumString, VariantNames};
+use strum_macros::Display;
 
 pub mod prelude {
-    pub use super::{Args, Commands, Periodical};
+    pub use super::{Args, Commands};
 }
 
 #[derive(Debug, Parser)]
@@ -33,30 +31,6 @@ impl Default for Commands {
             time_span: Some(Periodical::default()),
         }
     }
-}
-
-#[derive(
-    Debug,
-    Default,
-    Display,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-    Deserialize,
-    EnumString,
-    Parser,
-    VariantNames,
-)]
-#[strum(serialize_all = "kebab-case")]
-#[serde(rename_all = "kebab-case")]
-pub enum Periodical {
-    #[default]
-    Day,
-    Week,
-    Month,
-    Year,
 }
 
 fn periodical_help() -> String {
