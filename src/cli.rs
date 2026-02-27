@@ -1,5 +1,8 @@
 use clap::{Parser, Subcommand};
+use strum::VariantNames;
 use strum_macros::Display;
+
+pub use crate::prelude::*;
 
 pub mod prelude {
     pub use super::{Args, Commands};
@@ -12,7 +15,7 @@ pub struct Args {
     pub command: Option<Commands>,
 }
 
-#[derive(Debug, Display, Clone, Subcommand)]
+#[derive(Debug, Display, Subcommand)]
 pub enum Commands {
     ///  Opens up passed in periodical note
     #[clap(short_flag = 'p',long_about=periodical_help())]

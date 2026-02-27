@@ -34,7 +34,7 @@ impl ConfigFile {
 impl ConfigFileBuilder {
     pub fn try_build(self) -> Result<ConfigFile, ConfigError> {
         if !self.path.is_file() {
-            return Err(ConfigError::InvalidFile(self.path.clone()));
+            return Err(ConfigError::InvalidFile(self.path));
         }
         Ok(ConfigFile { path: self.path })
     }

@@ -13,7 +13,7 @@ pub struct App {
 }
 
 impl App {
-    pub fn run(&self) -> Result<(), RuntimeError> {
+    pub fn run(&self) -> anyhow::Result<()> {
         match self.command {
             Commands::Reset => println!("Reseting config."),
             Commands::Periodical { time_span } => {
@@ -22,7 +22,7 @@ impl App {
         }
         Ok(())
     }
-    pub fn open_periodic(&self, period: Periodical) -> Result<(), RuntimeError> {
+    pub fn open_periodic(&self, period: Periodical) -> anyhow::Result<()> {
         let file_dir = self.config.get_periodical_dir(period)?;
         let file_name = self.config.get_file_name(period);
         let file_path = &file_dir.join(file_name);
@@ -37,7 +37,7 @@ impl App {
 
         Ok(())
     }
-    fn write_periodical(&self, file_path: &Path, period: Periodical) -> Result<(), RuntimeError> {
+    fn write_periodical(&self, file_path: &Path, period: Periodical) -> anyhow::Result<()> {
         // check and validate templates before creating file
         let mut template = Vec::<u8>::new();
         if let Some(template_path) = self.config.get_template_path(period) {

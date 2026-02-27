@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use clap::Parser;
 use serde::Deserialize;
 use strum_macros::{Display, EnumString, VariantNames};
