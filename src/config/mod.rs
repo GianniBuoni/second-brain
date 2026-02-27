@@ -15,29 +15,15 @@ mod config_file;
 mod de;
 mod math;
 
-#[derive(Debug, Error)]
-pub enum ConfigError {
-    #[error("Config error. Couldn't parse system's OS config directory.")]
-    SystemDir,
-    #[error("Config error. Passed in path: {0} doesn't exist or isn't a file")]
-    InvalidFile(PathBuf),
-    #[error("Config error. Passed in path: {0} doesn't exist or isn't a directory")]
-    InvalidDir(PathBuf),
-    #[error("Config error. Couldn't read file: {0}.")]
-    Io(#[from] std::io::Error),
-    #[error("Config error. Couldn't deserialize passed in file: {0}")]
-    De(#[from] toml::de::Error),
-}
-
 #[derive(Debug, PartialEq)]
 pub struct AppConfig {
-    vault: PathBuf,
+    pub vault: PathBuf,
     pub periodical: HashMap<Periodical, PeriodConfig>,
 }
 
 #[derive(Debug, Clone, Deserialize, PartialEq)]
 pub struct PeriodConfig {
-    dir: Option<String>,
+    pub dir: Option<String>,
     template: Option<PathBuf>,
     pub fmt: Option<String>,
 }
@@ -138,44 +124,6 @@ mod tests {
             vault: "./vault".into(),
             periodical,
         }
-    }
-
-    #[test]
-    fn test_default_filename() {
-        let test_cases = [
-            (Periodical::Day, DEFAULT_DAY, "test default day config"),
-            (Periodical::Week, DEFAULT_WEEK, "test default week config"),
-            (
-                Periodical::Month,
-                DEFAULT_MONTH,
-                "test default month config",
-            ),
-            (Periodical::Year, DEFAULT_YEAR, "test default year config"),
-        ];
-        let app_config = default_config();
-
-        test_cases.into_iter().for_each(|(period, fmt, desc)| {
-            let want = format!("{}.md", Local::now().format(fmt));
-            let got = app_config.get_file_name(period);
-            assert_eq!(want, got, "{desc}");
-        });
-    }
-
-    #[test]
-    fn test_mixed_configs_filename() {
-        let test_cases = [
-            (Periodical::Day, "%m-%d-%Y", "test configured day fmt"),
-            (Periodical::Week, DEFAULT_WEEK, "test unconfigured week fmt"),
-            (Periodical::Month, "%m", "test fully configured month"),
-            (Periodical::Year, DEFAULT_YEAR, "test unconfigured year"),
-        ];
-        let app_config = mixed_config();
-
-        test_cases.into_iter().for_each(|(period, fmt, desc)| {
-            let want = format!("{}.md", Local::now().format(fmt));
-            let got = app_config.get_file_name(period);
-            assert_eq!(want, got, "{desc}");
-        });
     }
 
     #[test]

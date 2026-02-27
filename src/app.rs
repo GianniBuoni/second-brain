@@ -6,12 +6,6 @@ use std::{
 
 use crate::prelude::*;
 
-#[derive(Debug, thiserror::Error)]
-pub enum RuntimeError {
-    #[error("Runtime error. Couldn't read or parse file/dir: {0}")]
-    Io(#[from] std::io::Error),
-}
-
 #[derive(Debug)]
 pub struct App {
     pub config: AppConfig,
@@ -19,7 +13,7 @@ pub struct App {
 }
 
 impl App {
-    pub fn run(&self) -> anyhow::Result<()> {
+    pub fn run(&self) -> Result<(), RuntimeError> {
         match self.command {
             Commands::Reset => println!("Reseting config."),
             Commands::Periodical { time_span } => {
@@ -28,7 +22,7 @@ impl App {
         }
         Ok(())
     }
-    pub fn open_periodic(&self, period: Periodical) -> anyhow::Result<()> {
+    pub fn open_periodic(&self, period: Periodical) -> Result<(), RuntimeError> {
         let file_dir = self.config.get_periodical_dir(period)?;
         let file_name = self.config.get_file_name(period);
         let file_path = &file_dir.join(file_name);
@@ -43,7 +37,7 @@ impl App {
 
         Ok(())
     }
-    fn write_periodical(&self, file_path: &Path, period: Periodical) -> anyhow::Result<()> {
+    fn write_periodical(&self, file_path: &Path, period: Periodical) -> Result<(), RuntimeError> {
         // check and validate templates before creating file
         let mut template = Vec::<u8>::new();
         if let Some(template_path) = self.config.get_template_path(period) {
