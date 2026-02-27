@@ -11,6 +11,7 @@
 
       packages = with pkgs; [
         just
+        rust-analyzer
       ];
 
       commands = [
