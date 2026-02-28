@@ -16,9 +16,9 @@ impl PeriodConfig {
     pub fn get_parent_dir(&self) -> Option<&str> {
         Some(self.dir.as_ref()?.as_str())
     }
-    /// Getter that returns an Optional for the configured template directory
-    /// for the periodical note file.
-    pub fn get_template_dir(&self) -> Option<&str> {
+    /// Getter that returns an Optional for the configured template file
+    ///  location for the periodical note file.
+    pub fn get_template_file(&self) -> Option<&str> {
         Some(self.template.as_ref()?.as_str())
     }
     /// Attempts to get the configured file name associated with

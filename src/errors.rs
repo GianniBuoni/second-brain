@@ -21,7 +21,7 @@ pub enum RuntimeError {
 
 #[derive(Debug, thiserror::Error)]
 pub enum ConfigError {
-    #[error("Couldn't deserialize passed in file: {0}")]
+    #[error("Issue with deserialization: {0}")]
     De(#[from] toml::de::Error),
     #[error("Passed in path: {0} doesn't exist or isn't a directory")]
     InvalidDir(PathBuf),
