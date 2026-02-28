@@ -28,7 +28,7 @@ impl AppConfig {
     fn get_parent_dir(&self, period: Periodical) -> PathBuf {
         let dir = || {
             let config = self.periodical.get(&period)?;
-            Some(config.get_parent_dir()?)
+            config.get_parent_dir()
         };
         match dir() {
             Some(p) => self.get_vault_root().join(p),
@@ -45,7 +45,7 @@ impl AppConfig {
             .get(&period)
             .unwrap_or(&PeriodConfig::default())
             .format_file_name(period);
-        let mut full_path = PathBuf::from(parent_dir).join(file_name);
+        let mut full_path = parent_dir.join(file_name);
 
         if full_path.is_relative() {
             full_path = std::path::absolute(full_path)?;
@@ -78,15 +78,12 @@ mod tests {
                 "Test configured subdirectory",
             ),
         ];
-        test_cases
-            .iter()
-            .map(|(s, period, want, desc)| {
-                let got = AppConfig::try_from(toml::de::from_str::<TomlConfig>(s)?)?
-                    .get_parent_dir(*period);
-                assert_eq!(PathBuf::from(want), got, "{desc}");
-                anyhow::Ok(())
-            })
-            .collect()
+        test_cases.iter().try_for_each(|(s, period, want, desc)| {
+            let got =
+                AppConfig::try_from(toml::de::from_str::<TomlConfig>(s)?)?.get_parent_dir(*period);
+            assert_eq!(PathBuf::from(want), got, "{desc}");
+            anyhow::Ok(())
+        })
     }
 
     #[test]
@@ -105,16 +102,18 @@ mod tests {
                 "Test configured file name.",
             ),
         ];
-        test_cases
-            .iter()
-            .map(|(s, period, want, desc)| {
-                let got = AppConfig::try_from(toml::de::from_str::<TomlConfig>(s)?)?
-                    .format_absolute_note_path(*period)?;
-                let file_name = Local::now().format(*want).to_string();
-                assert!(got.to_string_lossy().contains(&file_name), "{desc}");
-                assert!(got.to_string_lossy().contains("vaults"), "{desc}");
-                anyhow::Ok(())
-            })
-            .collect()
+        test_cases.iter().try_for_each(|(s, period, want, desc)| {
+            let got = AppConfig::try_from(toml::de::from_str::<TomlConfig>(s)?)?
+                .try_format_absolute_note_path(*period)?;
+            let file_name = Local::now().format(want).to_string();
+            assert!(got.to_string_lossy().contains(&file_name), "{desc}");
+            assert!(got.to_string_lossy().contains("vaults"), "{desc}");
+            anyhow::Ok(())
+        })
+    }
+
+    #[test]
+    fn test_absolute_template_path() {
+        todo!()
     }
 }

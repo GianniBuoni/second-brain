@@ -25,16 +25,12 @@ impl PeriodConfig {
     /// this Periodical.
     /// Returns a default format if not configured.
     pub fn format_file_name(&self, period: Periodical) -> String {
-        let fmt = self
-            .fmt
-            .as_ref()
-            .map(|s| s.as_str())
-            .unwrap_or_else(|| match period {
-                Periodical::Day => DEFAULT_DAY,
-                Periodical::Week => DEFAULT_WEEK,
-                Periodical::Month => DEFAULT_MONTH,
-                Periodical::Year => DEFAULT_YEAR,
-            });
+        let fmt = self.fmt.as_deref().unwrap_or(match period {
+            Periodical::Day => DEFAULT_DAY,
+            Periodical::Week => DEFAULT_WEEK,
+            Periodical::Month => DEFAULT_MONTH,
+            Periodical::Year => DEFAULT_YEAR,
+        });
         let name = Local::now().format(fmt);
 
         format!("{name}.md")

@@ -85,15 +85,12 @@ mod tests {
                 "Test invalid app configuration, should still sucessfully deserialize",
             ),
         ];
-        test_cases
-            .iter()
-            .map(|(s, want, desc)| {
-                let got = toml::from_str::<TomlConfig>(s)?;
+        test_cases.iter().try_for_each(|(s, want, desc)| {
+            let got = toml::from_str::<TomlConfig>(s)?;
 
-                assert_eq!(got.vault.dir, PathBuf::from(want), "{desc}");
-                anyhow::Ok(())
-            })
-            .collect()
+            assert_eq!(got.vault.dir, PathBuf::from(want), "{desc}");
+            anyhow::Ok(())
+        })
     }
     #[test]
     fn test_de_period_dir() -> anyhow::Result<()> {
@@ -111,20 +108,17 @@ mod tests {
                 "Test invalid AppConfig, but valid TomlConfig",
             ),
         ];
-        test_cases
-            .iter()
-            .map(|(s, want, desc)| {
-                let got = toml::de::from_str::<TomlConfig>(s)?;
-                let got = got.periodical.unwrap_or_default().0;
-                let got = got
-                    .get(&period)
-                    .unwrap_or(&PeriodConfig::default())
-                    .get_parent_dir()
-                    .map(|f| f.to_string());
-                assert_eq!(*want, got, "{desc}");
-                anyhow::Ok(())
-            })
-            .collect()
+        test_cases.iter().try_for_each(|(s, want, desc)| {
+            let got = toml::de::from_str::<TomlConfig>(s)?;
+            let got = got.periodical.unwrap_or_default().0;
+            let got = got
+                .get(&period)
+                .unwrap_or(&PeriodConfig::default())
+                .get_parent_dir()
+                .map(|f| f.to_string());
+            assert_eq!(*want, got, "{desc}");
+            anyhow::Ok(())
+        })
     }
     #[test]
     fn test_de_template_dir() -> anyhow::Result<()> {
@@ -142,22 +136,19 @@ mod tests {
                 "Test invalid AppConfig, but valid TomlConfig",
             ),
         ];
-        test_cases
-            .iter()
-            .map(|(s, want, desc)| {
-                let got = toml::de::from_str::<TomlConfig>(s)?
-                    .periodical
-                    .unwrap_or_default()
-                    .0;
-                let got = got
-                    .get(&period)
-                    .unwrap_or(&PeriodConfig::default())
-                    .get_template_file()
-                    .map(|f| f.to_string());
-                assert_eq!(*want, got, "{desc}");
-                anyhow::Ok(())
-            })
-            .collect()
+        test_cases.iter().try_for_each(|(s, want, desc)| {
+            let got = toml::de::from_str::<TomlConfig>(s)?
+                .periodical
+                .unwrap_or_default()
+                .0;
+            let got = got
+                .get(&period)
+                .unwrap_or(&PeriodConfig::default())
+                .get_template_file()
+                .map(|f| f.to_string());
+            assert_eq!(*want, got, "{desc}");
+            anyhow::Ok(())
+        })
     }
     #[test]
     fn test_de_filename() -> anyhow::Result<()> {
@@ -179,21 +170,18 @@ mod tests {
                 "Test invalid AppConfig, but valid TomlConfig",
             ),
         ];
-        test_cases
-            .iter()
-            .map(|(s, want, desc)| {
-                let got = toml::de::from_str::<TomlConfig>(s)?
-                    .periodical
-                    .unwrap_or_default()
-                    .0;
-                let got = got
-                    .get(&period)
-                    .unwrap_or(&PeriodConfig::default())
-                    .format_file_name(period);
-                assert_eq!(format!("{want}.md"), got, "{desc}");
-                anyhow::Ok(())
-            })
-            .collect()
+        test_cases.iter().try_for_each(|(s, want, desc)| {
+            let got = toml::de::from_str::<TomlConfig>(s)?
+                .periodical
+                .unwrap_or_default()
+                .0;
+            let got = got
+                .get(&period)
+                .unwrap_or(&PeriodConfig::default())
+                .format_file_name(period);
+            assert_eq!(format!("{want}.md"), got, "{desc}");
+            anyhow::Ok(())
+        })
     }
 
     #[test]
