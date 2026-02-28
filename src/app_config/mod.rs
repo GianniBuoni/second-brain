@@ -56,34 +56,65 @@ impl AppConfig {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use chrono::Local;
 
-    /// the default config creates test cases where the failover
-    /// configurations will be used.
-    fn default_config() -> AppConfig {
-        AppConfig {
-            vault: "./vault".into(),
-            periodical: HashMap::new(),
-        }
+    use crate::app_config::de::TomlConfig;
+
+    use super::{test_configs::*, *};
+
+    #[test]
+    fn test_parent_dir() -> anyhow::Result<()> {
+        let test_cases = [
+            (
+                CASE_DEFAULTS,
+                Periodical::Day,
+                "./vaults",
+                "Test unconfigured sub-directories.",
+            ),
+            (
+                CASE_OPTIONS,
+                Periodical::Week,
+                "./vaults/period/week",
+                "Test configured subdirectory",
+            ),
+        ];
+        test_cases
+            .iter()
+            .map(|(s, period, want, desc)| {
+                let got = AppConfig::try_from(toml::de::from_str::<TomlConfig>(s)?)?
+                    .get_parent_dir(*period);
+                assert_eq!(PathBuf::from(want), got, "{desc}");
+                anyhow::Ok(())
+            })
+            .collect()
     }
 
     #[test]
-    fn test_parent_dir() {
-        let test_cases = [(
-            Periodical::Day,
-            default_config(),
-            "Test unconfigured sub-directories.",
-        )];
-        todo!()
-    }
-
-    #[test]
-    fn test_absoulute_note_path() {
-        let test_cases = [(
-            Periodical::Day,
-            default_config(),
-            "Test unconfigured file names",
-        )];
-        todo!()
+    fn test_absoulute_note_path() -> anyhow::Result<()> {
+        let test_cases = [
+            (
+                CASE_DEFAULTS,
+                Periodical::Day,
+                DEFAULT_DAY,
+                "Test unconfigured file names",
+            ),
+            (
+                CASE_OPTIONS,
+                Periodical::Day,
+                "%m-%d-%Y",
+                "Test configured file name.",
+            ),
+        ];
+        test_cases
+            .iter()
+            .map(|(s, period, want, desc)| {
+                let got = AppConfig::try_from(toml::de::from_str::<TomlConfig>(s)?)?
+                    .format_absolute_note_path(*period)?;
+                let file_name = Local::now().format(*want).to_string();
+                assert!(got.to_string_lossy().contains(&file_name), "{desc}");
+                assert!(got.to_string_lossy().contains("vaults"), "{desc}");
+                anyhow::Ok(())
+            })
+            .collect()
     }
 }
