@@ -67,22 +67,22 @@ mod tests {
             (
                 CASE_DEFAULTS,
                 "./vaults",
-                "Test leaving periodcal as default.",
+                "Case default: Test leaving periodcal as default.",
             ),
             (
                 CASE_FULL,
                 "./vaults",
-                "Test configuring all optional fields",
+                "Case full: Test configuring all optional fields",
             ),
             (
                 CASE_OPTIONS,
                 "./vaults",
-                "Test configuring a mixed bag of settings",
+                "Case options: Test configuring a mixed bag of settings",
             ),
             (
                 CASE_INVALID_VAULT,
                 "invalid",
-                "Test invalid app configuration, should still sucessfully deserialize",
+                "Case invalid: Test app configuration that should still sucessfully deserialize",
             ),
         ];
         test_cases.iter().try_for_each(|(s, want, desc)| {
@@ -96,16 +96,15 @@ mod tests {
     fn test_de_period_dir() -> anyhow::Result<()> {
         let period = Periodical::Week;
         let test_cases = [
-            (CASE_DEFAULTS, None, "Test unconfigured parent dir"),
+            (
+                CASE_DEFAULTS,
+                None,
+                "Case default: Test unconfigured parent dir",
+            ),
             (
                 CASE_OPTIONS,
                 Some("period/week".to_string()),
-                "Test configured parent dir",
-            ),
-            (
-                CASE_INVALID_VAULT,
-                None,
-                "Test invalid AppConfig, but valid TomlConfig",
+                "Case options: Test configured parent dir",
             ),
         ];
         test_cases.iter().try_for_each(|(s, want, desc)| {
@@ -127,13 +126,13 @@ mod tests {
             (
                 CASE_OPTIONS,
                 Some("templates/year.md".into()),
-                "Test set template config",
+                "Case options: Test set template config",
             ),
             (CASE_DEFAULTS, None, "Test unset template config"),
             (
                 CASE_INVALID_VAULT,
                 Some("year.md".into()),
-                "Test invalid AppConfig, but valid TomlConfig",
+                "Case invalid: Test invalid AppConfig, but valid TomlConfig",
             ),
         ];
         test_cases.iter().try_for_each(|(s, want, desc)| {
@@ -157,17 +156,17 @@ mod tests {
             (
                 CASE_DEFAULTS,
                 Local::now().format(DEFAULT_DAY),
-                "Test unset filename formatting",
+                "Case default: Test unset filename formatting",
             ),
             (
                 CASE_OPTIONS,
                 Local::now().format("%m-%d-%Y"),
-                "Test changed filename formatting",
+                "Case options: Test changed filename formatting",
             ),
             (
                 CASE_INVALID_VAULT,
                 Local::now().format(DEFAULT_DAY),
-                "Test invalid AppConfig, but valid TomlConfig",
+                "Case invalid: Test invalid AppConfig, but valid TomlConfig",
             ),
         ];
         test_cases.iter().try_for_each(|(s, want, desc)| {
