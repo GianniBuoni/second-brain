@@ -14,11 +14,8 @@ jobs:
       - name: Install nix
         uses: cachix/install-nix-action@4e002c8ec80594ecd40e759629461e26c8abed15 # v31
 
-      - name: Run shell test
-        run: nix develop . --command enterTest
-
-      - name: Run tests and build
-        run: nix develop . --command just
+      - name: Run test and build
+        run: nix build
 
   lint:
     name: Lint
