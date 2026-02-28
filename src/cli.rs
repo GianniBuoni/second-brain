@@ -38,7 +38,7 @@ impl Default for Commands {
 
 fn periodical_help() -> String {
     format!(
-        "Opens up passed in periodical note\n\nThis command will open your $EDITOR for your corresponding note. If none exists, then one will be written.\nArgument options are {:?}.\nsecond-brain will default to passing in \"daily\" if no argument is given.",
+        "Opens up passed in periodical note\n\nThis command will open your $EDITOR for your corresponding note. If none exists, then one will be written.\nArgument options are {:?}.\nsecond-brain will default to passing in \"day\" if no argument is given.",
         Periodical::VARIANTS
     )
 }
