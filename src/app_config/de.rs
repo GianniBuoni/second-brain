@@ -126,7 +126,7 @@ mod tests {
         let test_cases = [
             (
                 CASE_OPTIONS,
-                Some("/templates/year.md".into()),
+                Some("templates/year.md".into()),
                 "Test set template config",
             ),
             (CASE_DEFAULTS, None, "Test unset template config"),

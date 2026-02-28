@@ -24,7 +24,7 @@ dir = \"period/week\"
 
 [periodical.year]
 fmt = \"%Y\"
-template = \"/templates/year.md\"";
+template = \"templates/year.md\"";
 
 /// Test case sets only the required vault configuration
 /// Everything else should be a default

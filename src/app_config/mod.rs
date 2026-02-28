@@ -20,9 +20,6 @@ pub struct AppConfig {
 }
 
 impl AppConfig {
-    fn get_vault_root(&self) -> &Path {
-        &self.vault
-    }
     /// Attempts to get the parent directory of a note file.
     /// Returns the valut root if none is configured.
     fn get_parent_dir(&self, period: Periodical) -> PathBuf {
@@ -35,10 +32,16 @@ impl AppConfig {
             None => self.vault.clone(),
         }
     }
+    pub fn get_vault_root(&self) -> &Path {
+        &self.vault
+    }
     /// Attempts to format and return the absolute path of a note file.
     /// Returns `${VAULT_ROOT}/${DEFAULT_FILE_NAME_FORMAT}.md` if
     /// nothing was configured.
-    fn format_absolute_note_path(&self, period: Periodical) -> Result<PathBuf, RuntimeError> {
+    pub fn try_format_absolute_note_path(
+        &self,
+        period: Periodical,
+    ) -> Result<PathBuf, RuntimeError> {
         let parent_dir = self.get_parent_dir(period);
         let file_name = self
             .periodical
@@ -51,6 +54,22 @@ impl AppConfig {
             full_path = std::path::absolute(full_path)?;
         }
         Ok(full_path)
+    }
+    /// Attempts to get the absolute path of a possible template file.
+    pub fn try_format_absolute_template_path(
+        &self,
+        period: Periodical,
+    ) -> Result<Option<PathBuf>, RuntimeError> {
+        let path = || self.periodical.get(&period)?.get_template_file();
+        if let Some(path) = path() {
+            let mut path = self.get_vault_root().join(path);
+            if !path.is_absolute() {
+                path = std::path::absolute(path)?;
+            }
+            dbg!(&path);
+            return Ok(Some(path));
+        }
+        Ok(None)
     }
 }
 
@@ -113,7 +132,46 @@ mod tests {
     }
 
     #[test]
-    fn test_absolute_template_path() {
-        todo!()
+    fn test_absolute_template_path() -> anyhow::Result<()> {
+        let test_cases = [
+            (
+                CASE_DEFAULTS,
+                Periodical::Week,
+                None,
+                "Case default: test unconfigured template file",
+            ),
+            (
+                CASE_OPTIONS,
+                Periodical::Year,
+                Some("templates/year.md"),
+                "Case options: test configured template file",
+            ),
+            (
+                CASE_FULL,
+                Periodical::Day,
+                Some("day.md"),
+                "Case full: test configured template file",
+            ),
+        ];
+        test_cases.iter().try_for_each(|(s, period, want, desc)| {
+            let got = AppConfig::try_from(toml::de::from_str::<TomlConfig>(s)?)?;
+            let got = got.try_format_absolute_template_path(*period)?;
+            dbg!(&got);
+
+            match got {
+                None => assert!(want.is_none(), "Expeted None: {desc}"),
+                Some(path) => {
+                    assert!(
+                        path.to_string_lossy().contains(want.unwrap()),
+                        "Check want: {desc}"
+                    );
+                    assert!(
+                        path.to_string_lossy().contains("vaults"),
+                        "Check aubsolute-ish: {desc}"
+                    );
+                }
+            }
+            anyhow::Ok(())
+        })
     }
 }
