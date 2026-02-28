@@ -10,7 +10,6 @@ pub mod prelude {
 pub mod app;
 mod app_config;
 mod cli;
-mod config;
 mod config_file;
 mod errors;
 mod periodic;
