@@ -1,6 +1,6 @@
 [package]
 name = "second-brain"
-version = "0.3.1"
+version = "0.3.2"
 edition = "2024"
 description = "Remembering so you don't have to: simple CLI to quickly access Obsidian vaults in the terminal."
 
