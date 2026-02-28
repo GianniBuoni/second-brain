@@ -42,3 +42,24 @@ dir = \"period/month\"
 [periodical.year]
 fmt = \"%Y\"
 template = \"year.md\"";
+
+/// Test case supplies empty periodic configuration
+pub const PERIODIC_CASE_DEFAULT: &str = "";
+
+/// Test case supplies fully set periodic configuration
+pub const PERIODIC_CASE_FULL: &str = "[day]
+dir = \"day\"
+fmt = \"%Y-%m-%d\"
+template = \"day.md\"";
+
+/// Test case that has mixed sets of periodic configurations
+pub const PERIODIC_CASE_OPTIONS: &str = "[day]
+dir = \"day\"
+fmt = \"%m-%d-%Y\"
+
+[week]
+dir = \"period/week\"
+
+[year]
+fmt = \"%Y\"
+template = \"templates/year.md\"";

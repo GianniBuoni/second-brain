@@ -3,15 +3,18 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use serde::Deserialize;
+
 use crate::{periodic_config::PeriodConfig, prelude::*};
 
 pub mod prelude {
     pub use super::AppConfig;
 }
 
-mod de;
 #[cfg(test)]
-mod test_configs;
+mod test_cases;
+#[cfg(test)]
+mod tests;
 
 #[derive(Debug, PartialEq)]
 pub struct AppConfig {
@@ -73,105 +76,51 @@ impl AppConfig {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use chrono::Local;
+/// Raw TOML deserialization of the AppConfig
+#[derive(Debug, Deserialize, PartialEq)]
+pub struct TomlConfig {
+    vault: TomlVault,
+    periodical: Option<TomlPeriod>,
+}
 
-    use crate::app_config::de::TomlConfig;
+#[derive(Debug, Deserialize, PartialEq)]
+struct TomlVault {
+    dir: PathBuf,
+}
 
-    use super::{test_configs::*, *};
+#[derive(Debug, Default, Deserialize, PartialEq)]
+struct TomlPeriod(HashMap<Periodical, PeriodConfig>);
 
-    #[test]
-    fn test_parent_dir() -> anyhow::Result<()> {
-        let test_cases = [
-            (
-                CASE_DEFAULTS,
-                Periodical::Day,
-                "./vaults",
-                "Test unconfigured sub-directories.",
-            ),
-            (
-                CASE_OPTIONS,
-                Periodical::Week,
-                "./vaults/period/week",
-                "Test configured subdirectory",
-            ),
-        ];
-        test_cases.iter().try_for_each(|(s, period, want, desc)| {
-            let got =
-                AppConfig::try_from(toml::de::from_str::<TomlConfig>(s)?)?.get_parent_dir(*period);
-            assert_eq!(PathBuf::from(want), got, "{desc}");
-            anyhow::Ok(())
+impl TryFrom<TomlConfig> for AppConfig {
+    type Error = ConfigError;
+
+    fn try_from(value: TomlConfig) -> Result<Self, Self::Error> {
+        // validate vauld diretory
+        let vault = value.vault.dir.as_path();
+        if !vault.is_dir() {
+            return Err(ConfigError::InvalidDir(vault.to_owned()));
+        }
+        Ok(Self {
+            vault: value.vault.dir,
+            periodical: value.periodical.unwrap_or_default().0,
         })
     }
+}
 
-    #[test]
-    fn test_absoulute_note_path() -> anyhow::Result<()> {
-        let test_cases = [
-            (
-                CASE_DEFAULTS,
-                Periodical::Day,
-                DEFAULT_DAY,
-                "Test unconfigured file names",
-            ),
-            (
-                CASE_OPTIONS,
-                Periodical::Day,
-                "%m-%d-%Y",
-                "Test configured file name.",
-            ),
-        ];
-        test_cases.iter().try_for_each(|(s, period, want, desc)| {
-            let got = AppConfig::try_from(toml::de::from_str::<TomlConfig>(s)?)?
-                .try_format_absolute_note_path(*period)?;
-            let file_name = Local::now().format(want).to_string();
-            assert!(got.to_string_lossy().contains(&file_name), "{desc}");
-            assert!(got.to_string_lossy().contains("vaults"), "{desc}");
-            anyhow::Ok(())
-        })
+impl TryFrom<ConfigFile> for TomlConfig {
+    type Error = ConfigError;
+
+    fn try_from(value: ConfigFile) -> Result<Self, Self::Error> {
+        let bytes = std::fs::read(value.0)?;
+        Ok(toml::from_slice::<TomlConfig>(&bytes)?)
     }
+}
 
-    #[test]
-    fn test_absolute_template_path() -> anyhow::Result<()> {
-        let test_cases = [
-            (
-                CASE_DEFAULTS,
-                Periodical::Week,
-                None,
-                "Case default: test unconfigured template file",
-            ),
-            (
-                CASE_OPTIONS,
-                Periodical::Year,
-                Some("templates/year.md"),
-                "Case options: test configured template file",
-            ),
-            (
-                CASE_FULL,
-                Periodical::Day,
-                Some("day.md"),
-                "Case full: test configured template file",
-            ),
-        ];
-        test_cases.iter().try_for_each(|(s, period, want, desc)| {
-            let got = AppConfig::try_from(toml::de::from_str::<TomlConfig>(s)?)?;
-            let got = got.try_format_absolute_template_path(*period)?;
-            dbg!(&got);
+impl TryFrom<ConfigFile> for AppConfig {
+    type Error = ConfigError;
 
-            match got {
-                None => assert!(want.is_none(), "Expeted None: {desc}"),
-                Some(path) => {
-                    assert!(
-                        path.to_string_lossy().contains(want.unwrap()),
-                        "Check want: {desc}"
-                    );
-                    assert!(
-                        path.to_string_lossy().contains("vaults"),
-                        "Check aubsolute-ish: {desc}"
-                    );
-                }
-            }
-            anyhow::Ok(())
-        })
+    fn try_from(value: ConfigFile) -> Result<Self, Self::Error> {
+        let toml = TomlConfig::try_from(value)?;
+        AppConfig::try_from(toml)
     }
 }
