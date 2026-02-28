@@ -1,10 +1,11 @@
 use clap::{Parser, Subcommand};
-use serde::Deserialize;
 use strum::VariantNames;
-use strum_macros::{Display, EnumString, VariantNames};
+use strum_macros::Display;
+
+pub use crate::prelude::*;
 
 pub mod prelude {
-    pub use super::{Args, Commands, Periodical};
+    pub use super::{Args, Commands};
 }
 
 #[derive(Debug, Parser)]
@@ -14,7 +15,7 @@ pub struct Args {
     pub command: Option<Commands>,
 }
 
-#[derive(Debug, Display, Clone, Subcommand)]
+#[derive(Debug, Display, Subcommand)]
 pub enum Commands {
     ///  Opens up passed in periodical note
     #[clap(short_flag = 'p',long_about=periodical_help())]
@@ -35,33 +36,9 @@ impl Default for Commands {
     }
 }
 
-#[derive(
-    Debug,
-    Default,
-    Display,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-    Deserialize,
-    EnumString,
-    Parser,
-    VariantNames,
-)]
-#[strum(serialize_all = "kebab-case")]
-#[serde(rename_all = "kebab-case")]
-pub enum Periodical {
-    #[default]
-    Day,
-    Week,
-    Month,
-    Year,
-}
-
 fn periodical_help() -> String {
     format!(
-        "Opens up passed in periodical note\n\nThis command will open your $EDITOR for your corresponding note. If none exists, then one will be written.\nArgument options are {:?}.\nsecond-brain will default to passing in \"daily\" if no argument is given.",
+        "Opens up passed in periodical note\n\nThis command will open your $EDITOR for your corresponding note. If none exists, then one will be written.\nArgument options are {:?}.\nsecond-brain will default to passing in \"day\" if no argument is given.",
         Periodical::VARIANTS
     )
 }
