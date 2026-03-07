@@ -69,7 +69,6 @@ impl AppConfig {
             if !path.is_absolute() {
                 path = std::path::absolute(path)?;
             }
-            dbg!(&path);
             return Ok(Some(path));
         }
         Ok(None)
