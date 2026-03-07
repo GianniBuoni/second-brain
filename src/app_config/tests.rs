@@ -83,7 +83,6 @@ fn test_absolute_template_path() -> anyhow::Result<()> {
             periodical: toml::de::from_str::<TomlPeriod>(s)?.0,
         };
         let got = config.try_format_absolute_template_path(*period)?;
-        dbg!(&got);
 
         match got {
             None => assert!(want.is_none(), "Expeted None: {desc}"),
