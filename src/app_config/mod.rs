@@ -3,6 +3,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use chrono::Local;
 use serde::Deserialize;
 
 use crate::{periodic_config::PeriodConfig, prelude::*};
@@ -46,11 +47,16 @@ impl AppConfig {
         period: Periodical,
     ) -> Result<PathBuf, RuntimeError> {
         let parent_dir = self.get_parent_dir(period);
-        let file_name = self
-            .periodical
-            .get(&period)
-            .unwrap_or(&PeriodConfig::default())
-            .format_file_name(period);
+
+        let file_name = {
+            let name = self
+                .periodical
+                .get(&period)
+                .unwrap_or(&PeriodConfig::default())
+                .format(period, Local::now());
+
+            format!("{name}.md")
+        };
         let mut full_path = parent_dir.join(file_name);
 
         if full_path.is_relative() {

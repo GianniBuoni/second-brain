@@ -219,11 +219,13 @@ fn test_de_filename() -> anyhow::Result<()> {
             .periodical
             .unwrap_or_default()
             .0;
+        let date = Local::now();
         let got = got
             .get(&period)
             .unwrap_or(&PeriodConfig::default())
-            .format_file_name(period);
-        assert_eq!(format!("{want}.md"), got, "{desc}");
+            .format(period, date);
+
+        assert_eq!(want.to_string(), got, "{desc}");
         anyhow::Ok(())
     })
 }

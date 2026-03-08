@@ -118,10 +118,9 @@ mod test {
         ];
 
         test_cases.into_iter().for_each(|(period, interval, want)| {
-            let fmt = config.get_format(period);
             let got = period
                 .get_next(date, interval)
-                .map(|f| f.format(fmt).to_string());
+                .map(|f| config.format(period, f));
 
             assert_eq!(Some(want.to_string()), got)
         });
@@ -140,10 +139,9 @@ mod test {
         ];
 
         test_cases.into_iter().for_each(|(period, interval, want)| {
-            let fmt = config.get_format(period);
             let got = period
                 .get_prev(date, interval)
-                .map(|f| f.format(fmt).to_string());
+                .map(|f| config.format(period, f));
 
             assert_eq!(Some(want.to_string()), got)
         });
