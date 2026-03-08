@@ -1,5 +1,5 @@
 build:
-    cargo build
+    nix build
 
 test:
     cargo test
