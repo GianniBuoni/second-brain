@@ -37,10 +37,11 @@ pub enum Periodical {
 
 impl Periodical {
     pub fn open(&self, config: &AppConfig) -> Result<(), Status> {
-        let path = config.try_format_absolute_note_path(*self)?;
+        let date = Local::now();
+        let path = config.try_format_absolute_note_path(*self, date)?;
         // write file if it doesn't exist
         if !path.exists() {
-            self.write(config, &path)?;
+            self.write(config, &path, date)?;
         }
         // open file in editor
         let editor = std::env::var("EDITOR").unwrap_or("nvim".into());
@@ -52,14 +53,19 @@ impl Periodical {
 
         Ok(())
     }
-    fn write(&self, config: &AppConfig, path: &Path) -> Result<(), Status> {
+    fn write(&self, config: &AppConfig, path: &Path, date: DateTime<Local>) -> Result<(), Status> {
         let mut contents = Vec::<u8>::new();
+        if let Some(heading) = self.try_format_heading(config, date) {
+            contents.append(&mut heading.into());
+            contents.append(&mut "\n\n".to_string().into());
+        }
         if let Some(template_path) = config.try_format_absolute_template_path(*self)? {
             // validate template before reading
             if !template_path.is_file() {
                 return Err(ConfigError::InvalidFile(template_path).into());
             }
-            contents = std::fs::read(template_path).map_err(RuntimeError::Io)?;
+            let mut template = std::fs::read(template_path).map_err(RuntimeError::Io)?;
+            contents.append(&mut template);
         }
         // create any necessary parent dirs
         if let Some(parent_path) = path.parent() {
@@ -82,7 +88,7 @@ impl Periodical {
     /// Given a start date and an interval of Periodcals expressed as an uint,
     /// will calculate the next interval date in time
     /// with the correct formatting.
-    pub fn get_next(&self, date: DateTime<Local>, interval: u32) -> Option<DateTime<Local>> {
+    fn get_next(&self, date: DateTime<Local>, interval: u32) -> Option<DateTime<Local>> {
         match self {
             Periodical::Day => date.checked_add_days(Days::new(u64::from(interval))),
             Periodical::Week => date.checked_add_days(Days::new(u64::from(interval * 7))),
@@ -93,7 +99,7 @@ impl Periodical {
     /// Given a start date and an interval of Periodcals expressed as an uint,
     /// will calculate the next interval date in time
     /// with the correct formatting.
-    pub fn get_prev(&self, date: DateTime<Local>, interval: u32) -> Option<DateTime<Local>> {
+    fn get_prev(&self, date: DateTime<Local>, interval: u32) -> Option<DateTime<Local>> {
         match self {
             Periodical::Day => date.checked_sub_days(Days::new(u64::from(interval))),
             Periodical::Week => date.checked_sub_days(Days::new(u64::from(interval * 7))),
