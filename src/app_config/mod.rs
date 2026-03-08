@@ -3,7 +3,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use chrono::Local;
+use chrono::{DateTime, Local};
 use serde::Deserialize;
 
 use crate::{periodic_config::PeriodConfig, prelude::*};
@@ -17,7 +17,7 @@ mod test_cases;
 #[cfg(test)]
 mod tests;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Default, PartialEq)]
 pub struct AppConfig {
     vault: PathBuf,
     periodical: HashMap<Periodical, PeriodConfig>,
@@ -38,6 +38,14 @@ impl AppConfig {
     }
     pub fn get_vault_root(&self) -> &Path {
         &self.vault
+    }
+    /// Formats the date with interior periodical configurations
+    /// Uses the default formatting configurations if none exists.
+    pub fn format_date(&self, period: Periodical, date: DateTime<Local>) -> String {
+        self.periodical
+            .get(&period)
+            .unwrap_or(&PeriodConfig::default())
+            .format(period, date)
     }
     /// Attempts to format and return the absolute path of a note file.
     /// Returns `${VAULT_ROOT}/${DEFAULT_FILE_NAME_FORMAT}.md` if
