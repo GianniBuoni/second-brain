@@ -73,7 +73,12 @@ impl Periodical {
         }
         Ok(())
     }
+    fn try_format_heading(&self, config: &AppConfig, date: DateTime<Local>) -> Option<String> {
+        let prev = config.format_date(*self, self.get_prev(date, 1)?);
+        let next = config.format_date(*self, self.get_next(date, 1)?);
 
+        Some(format!("[[{prev}]] - [[{next}]]"))
+    }
     /// Given a start date and an interval of Periodcals expressed as an uint,
     /// will calculate the next interval date in time
     /// with the correct formatting.
@@ -144,6 +149,24 @@ mod test {
                 .map(|f| config.format(period, f));
 
             assert_eq!(Some(want.to_string()), got)
+        });
+    }
+    #[test]
+    fn test_headings() {
+        let desc = "Test template heading genereation";
+        let date = Local.with_ymd_and_hms(2025, 12, 30, 0, 0, 0).unwrap();
+        let config = AppConfig::default();
+
+        let test_cases = [
+            (Periodical::Day, "[[2025-12-29]] - [[2025-12-31]]"),
+            (Periodical::Week, "[[2025-W52]] - [[2026-W02]]"),
+            (Periodical::Month, "[[2025-11]] - [[2026-01]]"),
+            (Periodical::Year, "[[2024]] - [[2026]]"),
+        ];
+
+        test_cases.into_iter().for_each(|(period, want)| {
+            let got = period.try_format_heading(&config, date);
+            assert_eq!(Some(want.into()), got, "{desc}: {period}")
         });
     }
 }
