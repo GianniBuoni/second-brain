@@ -1,5 +1,6 @@
 use std::{io::Write, path::Path};
 
+use chrono::{DateTime, Days, Local, Months};
 use clap::Parser;
 use serde::Deserialize;
 use strum_macros::{Display, EnumString, VariantNames};
@@ -71,5 +72,80 @@ impl Periodical {
             f.write(&contents).map_err(RuntimeError::Io)?;
         }
         Ok(())
+    }
+
+    /// Given a start date and an interval of Periodcals expressed as an uint,
+    /// will calculate the next interval date in time
+    /// with the correct formatting.
+    pub fn get_next(&self, date: DateTime<Local>, interval: u32) -> Option<DateTime<Local>> {
+        match self {
+            Periodical::Day => date.checked_add_days(Days::new(u64::from(interval))),
+            Periodical::Week => date.checked_add_days(Days::new(u64::from(interval * 7))),
+            Periodical::Month => date.checked_add_months(Months::new(interval)),
+            Periodical::Year => date.checked_add_months(Months::new(interval * 12)),
+        }
+    }
+    /// Given a start date and an interval of Periodcals expressed as an uint,
+    /// will calculate the next interval date in time
+    /// with the correct formatting.
+    pub fn get_prev(&self, date: DateTime<Local>, interval: u32) -> Option<DateTime<Local>> {
+        match self {
+            Periodical::Day => date.checked_sub_days(Days::new(u64::from(interval))),
+            Periodical::Week => date.checked_sub_days(Days::new(u64::from(interval * 7))),
+            Periodical::Month => date.checked_sub_months(Months::new(interval)),
+            Periodical::Year => date.checked_sub_months(Months::new(interval * 12)),
+        }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use chrono::TimeZone;
+
+    use super::super::periodic_config::PeriodConfig;
+    use super::*;
+
+    #[test]
+    fn test_get_next() {
+        let date = Local.with_ymd_and_hms(2025, 12, 30, 0, 0, 0).unwrap();
+        let config = PeriodConfig::default();
+
+        let test_cases = [
+            (Periodical::Day, 1, "2025-12-31"),
+            (Periodical::Week, 1, "2026-W02"),
+            (Periodical::Month, 1, "2026-01"),
+            (Periodical::Year, 2, "2027"),
+        ];
+
+        test_cases.into_iter().for_each(|(period, interval, want)| {
+            let fmt = config.get_format(period);
+            let got = period
+                .get_next(date, interval)
+                .map(|f| f.format(fmt).to_string());
+
+            assert_eq!(Some(want.to_string()), got)
+        });
+    }
+
+    #[test]
+    fn test_get_prev() {
+        let date = Local.with_ymd_and_hms(2025, 12, 30, 0, 0, 0).unwrap();
+        let config = PeriodConfig::default();
+
+        let test_cases = [
+            (Periodical::Day, 1, "2025-12-29"),
+            (Periodical::Week, 1, "2025-W52"),
+            (Periodical::Month, 10, "2025-02"),
+            (Periodical::Year, 2, "2023"),
+        ];
+
+        test_cases.into_iter().for_each(|(period, interval, want)| {
+            let fmt = config.get_format(period);
+            let got = period
+                .get_prev(date, interval)
+                .map(|f| f.format(fmt).to_string());
+
+            assert_eq!(Some(want.to_string()), got)
+        });
     }
 }
