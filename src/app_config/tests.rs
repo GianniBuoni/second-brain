@@ -46,7 +46,7 @@ fn test_absoulute_note_path() -> anyhow::Result<()> {
             vault: "./vaults".into(),
             periodical: toml::de::from_str::<TomlPeriod>(s)?.0,
         };
-        let got = config.try_format_absolute_note_path(*period)?;
+        let got = config.try_format_absolute_note_path(*period, Local::now())?;
         let file_name = Local::now().format(want).to_string();
 
         assert!(got.to_string_lossy().contains(&file_name), "{desc}");
@@ -219,11 +219,13 @@ fn test_de_filename() -> anyhow::Result<()> {
             .periodical
             .unwrap_or_default()
             .0;
+        let date = Local::now();
         let got = got
             .get(&period)
             .unwrap_or(&PeriodConfig::default())
-            .format_file_name(period);
-        assert_eq!(format!("{want}.md"), got, "{desc}");
+            .format(period, date);
+
+        assert_eq!(want.to_string(), got, "{desc}");
         anyhow::Ok(())
     })
 }
