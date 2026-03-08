@@ -45,6 +45,7 @@ impl AppConfig {
     pub fn try_format_absolute_note_path(
         &self,
         period: Periodical,
+        date: DateTime<Local>,
     ) -> Result<PathBuf, RuntimeError> {
         let parent_dir = self.get_parent_dir(period);
 
@@ -53,7 +54,7 @@ impl AppConfig {
                 .periodical
                 .get(&period)
                 .unwrap_or(&PeriodConfig::default())
-                .format(period, Local::now());
+                .format(period, date);
 
             format!("{name}.md")
         };
